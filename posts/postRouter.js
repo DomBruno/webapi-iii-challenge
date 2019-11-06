@@ -64,7 +64,7 @@ function validatePostId(req, res, next) {
         res
         .status(500)
         .json({
-             message: "Error retrieving posts data", err });
+             message: 'Error retrieving posts data', err });
       });
 };
 
