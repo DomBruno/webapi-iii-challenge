@@ -5,11 +5,36 @@ const postDB = require('../posts/postDb');
 const router = express.Router();
 
 router.post('/', validateUser, (req, res) => {
-
+    const newUser = req.body;
+    userDB.insert(newUser)
+      .then(user => {
+        res
+        .status(201)
+        .json(user);
+      })
+      .catch(err => {
+        res
+        .status(500)
+        .json({ 
+            message: 'Error creating new user', err });
+      });
 });
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
-
+    const newPost = req.body;
+    newPost.user_id = req.params.id;
+    postDb.insert(newPost)
+      .then(post => {
+        res
+        .status(201)
+        .json(post);
+      })
+      .catch(err => {
+        res
+        .status(500)
+        .json({ 
+            message: 'Error creating new post', err });
+      });
 });
 
 router.get('/', (req, res) => {
@@ -23,7 +48,7 @@ router.get('/', (req, res) => {
       res
       .status(500)
       .json({ 
-          message: "Error retrieving User data", err
+          message: 'Error retrieving User data', err
          });
     });
 });
@@ -54,17 +79,49 @@ router.get('/:id/posts', validateUserId, (req, res) => {
     .catch(err => {
       res
       .status(500)
-      .json({ message: "Error retrieving user posts", err
+      .json({ message: 'Error retrieving user posts', err
      });
     });
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
-
+    userDB.remove(req.params.id)
+    .then(() => {
+      res
+      .status(204)
+      .end();
+    })
+    .catch(err => {
+      res
+      .status(500)
+      .json({ 
+          message: `Error deleting user ${id}`, err });
+    });
 });
 
 router.put('/:id', validateUserId, (req, res) => {
-
+    const updateInfo = req.body;
+    userDB.update(req.params.id, updateInfo)
+      .then(() => {
+        userDB.getById(req.params.id)
+          .then(user => {
+            res
+            .status(201)
+            .json(user);
+          })
+          .catch(err => {
+            res
+              .status(500)
+              .json({
+                   message: 'Error retrieving updated user file', err });
+          });
+      })
+      .catch(err => {
+        res
+        .status(500)
+        .json({
+             message: `Error updating user ${id}`, err });
+      });
 });
 
 //custom middleware
