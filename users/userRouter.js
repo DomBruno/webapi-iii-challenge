@@ -70,7 +70,22 @@ router.put('/:id', validateUserId, (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-
+    const { id } = req.params;
+    userDB.getById(id)
+      .then(user => {
+        user
+          ? ((req.user = user), next())
+          : res
+              .status(404)
+              .json({
+                   message: `User with id ${id} could not be found` });
+      })
+      .catch(err => {
+        res
+        .status(500)
+        .json({
+             message: 'Error retrieving users data', err });
+      });
 };
 
 function validateUser(req, res, next) {
