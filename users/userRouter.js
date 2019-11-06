@@ -39,7 +39,7 @@ router.get('/:id', validateUserId, (req, res) => {
       res
       .status(500)
       .json({ 
-          message: "Error retrieving user", err 
+          message: `Error retrieving user ${id}`, err 
         });
     });
 });
@@ -48,8 +48,8 @@ router.get('/:id/posts', validateUserId, (req, res) => {
     userDB.getUserPosts(req.params.id)
     .then(posts => {
       res
-      .status(200
-        .json(posts);
+      .status(200)
+      .json(posts);
     })
     .catch(err => {
       res
@@ -89,11 +89,22 @@ function validateUserId(req, res, next) {
 };
 
 function validateUser(req, res, next) {
-
+    const bodyInfo = req.body;
+    bodyInfo.name
+      ? next()
+      : res
+      .status(400)
+      .json({ 
+          messsage: 'Missing name on submission' });
 };
 
 function validatePost(req, res, next) {
-
+    const bodyInfo = req.body;
+    bodyInfo.text
+      ? next()
+      : res
+      .status(400)
+      .json({ message: 'Missing text on submission' });
 };
 
 module.exports = router;
