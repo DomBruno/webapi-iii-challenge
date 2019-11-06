@@ -100,8 +100,8 @@ router.delete('/:id', validateUserId, (req, res) => {
 });
 
 router.put('/:id', validateUserId, (req, res) => {
-    const updateInfo = req.body;
-    userDB.update(req.params.id, updateInfo)
+    const updateUser = req.body;
+    userDB.update(req.params.id,  updateUser)
       .then(() => {
         userDB.getById(req.params.id)
           .then(user => {

@@ -44,7 +44,36 @@ router.delete('/:id', validatePostId, (req, res) => {
     });
 
 router.put('/:id', validatePostId, (req, res) => {
-
+    const updatePost = req.body;
+    updatePost.id = req.params.id;
+    updatePost.text && updatePost.user_id
+    ? postDB
+    .update(updatePost.id, updatePost)
+    .then(() => {
+        postDB.getById(updatePost.id)
+        .then(post => {
+          res
+          .status(201)
+          .json(post);
+        })
+        .catch(err => {
+          res
+            .status(500)
+            .json({ message: 'Error retrieving data from server' });
+        });
+    })
+    .catch(err => {
+      res
+      .status(500)
+      .json({ 
+          message: `Error editing post ${id}`, err });
+    })
+: res
+    .status(400)
+    .json({
+      message: 'Bad request. Body is missing text or user_id key',
+      updatePost
+    });
 });
 
 // custom middleware
